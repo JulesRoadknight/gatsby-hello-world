@@ -1,0 +1,32 @@
+---
+    resources:
+      - name: resource-gatsby-hello-world
+        type: git
+        source:
+          uri: https://github.com/Jimjule/gatsby-hello-world
+          branch: master
+  
+      - name: drupal-concourse-tools
+        type: git
+        source:
+          uri: git@github.com:comicrelief/drupal_concourse_tools.git
+          branch: master
+          depth: 0
+          private_key: ((github_deploy_key_frost_concourse))
+          
+    jobs:
+      - name: job-hello-world
+        public: true
+        plan:
+            - in_parallel:
+              - get: resource-gatsby-hello-world
+              - get: drupal-concourse-tools
+              trigger: true
+            - task: 'DEPLOY REACT FRONTEND TO S3 BUCKET'
+              file: drupal-concourse-tools/scripts/deploy_gatsby_s3/deploy_gatsby_s3.yml
+              input_mapping:
+                repository: comicrelief-contentful
+              params:
+                AWS_ACCESS_KEY_ID: ((aws_access_key))
+                AWS_SECRET_ACCESS_KEY: ((aws_secret_key))
+                S3_BUCKET_PATH: ((bucket_staging))
