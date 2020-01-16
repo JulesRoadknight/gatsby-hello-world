@@ -10,6 +10,7 @@ module.exports = {
         resolve: `gatsby-plugin-s3`,
         options: {
             bucketName: 'jules-practise-bucket',
+            region: 'us-east-2',
             acl: null
         },
     },
